@@ -253,7 +253,7 @@ MonoBehaviour:
   detailScale: 8
   enableNoise: 1
   debugVertices: 0
-  debugEdges: 1
+  debugEdges: 0
   thickness: 1
   lineColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &959418770
