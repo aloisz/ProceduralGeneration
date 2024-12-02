@@ -2,14 +2,21 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class IcosahedronGen : MonoBehaviour
 {
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
+
+    [Header("Property")] 
+    [SerializeField] private int planetSizeMutl = 1;
+    [SerializeField] private int planetSubdivision = 1;
+
     private List<Vector3> vertices;
     private List<int> triangles;
+    private Dictionary<long, int> midTriangles;
 
     private void Awake()
     {
@@ -19,14 +26,23 @@ public class IcosahedronGen : MonoBehaviour
 
     private void Start()
     {
+        vertices = new List<Vector3>();
+        triangles = new List<int>();
+        midTriangles = new Dictionary<long, int>();
+        
+        
         GetAllVertex();
         GetAllTriangle();
+        for (int i = 0; i < planetSubdivision; i++)
+        {
+            Subdivision();
+        }
         AssembleMesh();
     }
 
     private void AddVertex(float x, float y, float z)
     {
-        vertices.Add(new Vector3(x, y, z).normalized); // normalize the vector for a unit sphere
+        vertices.Add((new Vector3(x, y, z).normalized ) * planetSizeMutl); // normalize the vector for a unit sphere
     }
 
     private void AddTriangles(int x, int y, int z)
@@ -57,7 +73,6 @@ public class IcosahedronGen : MonoBehaviour
         AddVertex(-phi, 0, -1);
         AddVertex(-phi, 0, 1);
     }
-    
     private void GetAllTriangle()
     {
         // 20 triangles
@@ -86,6 +101,56 @@ public class IcosahedronGen : MonoBehaviour
         AddTriangles(9,8,1);
     }
 
+    private void Subdivision()
+    {
+        var newTriangle = new List<int>();
+        midTriangles.Clear();
+        
+        for (int i = 0; i < triangles.Count; i += 3) // Move between each triangle
+        {
+            // get the vertex
+            int v1 = triangles[i];
+            int v2 = triangles[i + 1];
+            int v3 = triangles[i + 2];
+
+            // Get midpoint for vertex
+            var a = GetMidPoint(v1, v2);
+            var b = GetMidPoint(v2, v3);
+            var c = GetMidPoint(v3, v1);
+            
+            newTriangle.AddRange(new int[]
+            {
+                v1, a, c,
+                v2, b, a, 
+                v3, c, b,
+                a, b, c
+            });
+        }
+        triangles = newTriangle;
+    }
+
+    int GetMidPoint(int v1,int v2)
+    {
+        var min = Mathf.Min(v1, v2);
+        var max = Mathf.Max(v1, v2);
+        var key = min * vertices.Count + max;
+
+        if (midTriangles.TryGetValue(key, out int midpointIndex))
+        {
+            return midpointIndex;
+        }
+        
+        // Creating new vertex
+        Vector3 midpoint = (vertices[v1] + vertices[v2]) * 0.5f;
+        AddVertex(midpoint.x, midpoint.y, midpoint.z);
+        
+        midpointIndex = vertices.Count - 1;
+        midTriangles[key] = midpointIndex; 
+        
+        return midpointIndex;
+    }
+    
+    
 
     private void AssembleMesh()
     {
@@ -97,9 +162,10 @@ public class IcosahedronGen : MonoBehaviour
         
         meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
     }
-
+    
     private void OnDrawGizmos()
     {
+        if(!Application.isPlaying) return;
         Handles.color = Color.red;
         for (int i = 0; i < vertices.Count; i++)
         {
