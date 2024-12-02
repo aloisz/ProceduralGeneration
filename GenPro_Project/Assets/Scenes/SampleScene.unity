@@ -248,7 +248,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   planetSizeMutl: 25
-  planetSubdivision: 2
+  planetSubdivision: 3
+  noiseHeight: 5
+  detailScale: 8
+  debugVertices: 0
+  debugEdges: 1
+  thickness: 2
+  lineColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &959418770
 Transform:
   m_ObjectHideFlags: 0
@@ -402,8 +408,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalRotation: {x: -0.15382397, y: -0.6901688, z: 0.153846, w: -0.6901714}
+  m_LocalPosition: {x: -64.93467, y: 29.937908, z: -4.9216156}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

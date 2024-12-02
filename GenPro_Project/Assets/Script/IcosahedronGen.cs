@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 public class IcosahedronGen : MonoBehaviour
@@ -9,10 +10,19 @@ public class IcosahedronGen : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
-
     [Header("Property")] 
-    [SerializeField] private int planetSizeMutl = 1;
-    [SerializeField] private int planetSubdivision = 1;
+    [Range(0,50)][SerializeField] private int planetSizeMutl = 1;
+    [Range(0,6)][SerializeField] private int planetSubdivision = 1;
+
+    [Header("Noise")] 
+    [Range(0,20)][SerializeField] private float noiseHeight = 1;
+    [Range(0,10)][SerializeField] private float detailScale = 1;
+
+    [Header("Debug")] 
+    [SerializeField] private bool debugVertices = false;
+    [SerializeField] private bool debugEdges = false;
+    [Range(0,3)][SerializeField] private int thickness = 2;
+    [SerializeField] private Color lineColor = Color.green;
 
     private List<Vector3> vertices;
     private List<int> triangles;
@@ -30,26 +40,28 @@ public class IcosahedronGen : MonoBehaviour
         triangles = new List<int>();
         midTriangles = new Dictionary<long, int>();
         
-        
         GetAllVertex();
         GetAllTriangle();
+        
         for (int i = 0; i < planetSubdivision; i++)
         {
             Subdivision();
         }
+        
+        
         AssembleMesh();
     }
 
+    #region Vertex 
+
     private void AddVertex(float x, float y, float z)
     {
-        vertices.Add((new Vector3(x, y, z).normalized ) * planetSizeMutl); // normalize the vector for a unit sphere
-    }
-
-    private void AddTriangles(int x, int y, int z)
-    {
-        triangles.Add(x);
-        triangles.Add(y);
-        triangles.Add(z);
+        // normalize the vector for a unit sphere
+        Vector3 vertex = new Vector3(x, y, z).normalized * planetSizeMutl; 
+        
+        //Vector3 NoiseVertex = vertex * 
+        
+        vertices.Add(vertex); 
     }
     
     private void GetAllVertex()
@@ -73,6 +85,20 @@ public class IcosahedronGen : MonoBehaviour
         AddVertex(-phi, 0, -1);
         AddVertex(-phi, 0, 1);
     }
+    
+
+    #endregion
+    
+    #region Triangle
+
+    private void AddTriangles(int x, int y, int z)
+    {
+        triangles.Add(x);
+        triangles.Add(y);
+        triangles.Add(z);
+    }
+    
+    
     private void GetAllTriangle()
     {
         // 20 triangles
@@ -101,19 +127,22 @@ public class IcosahedronGen : MonoBehaviour
         AddTriangles(9,8,1);
     }
 
+    #endregion
+
+    #region Subdivision
+
     private void Subdivision()
     {
         var newTriangle = new List<int>();
-        midTriangles.Clear();
         
         for (int i = 0; i < triangles.Count; i += 3) // Move between each triangle
         {
-            // get the vertex
+            // get the triangle
             int v1 = triangles[i];
             int v2 = triangles[i + 1];
             int v3 = triangles[i + 2];
-
-            // Get midpoint for vertex
+            
+            // get a new vertices
             var a = GetMidPoint(v1, v2);
             var b = GetMidPoint(v2, v3);
             var c = GetMidPoint(v3, v1);
@@ -131,9 +160,10 @@ public class IcosahedronGen : MonoBehaviour
 
     int GetMidPoint(int v1,int v2)
     {
-        var min = Mathf.Min(v1, v2);
-        var max = Mathf.Max(v1, v2);
-        var key = min * vertices.Count + max;
+        long min = Mathf.Min(v1, v2);
+        long max = Mathf.Max(v1, v2);
+        // Unique Key
+        long key = (min*32*32) + max; 
 
         if (midTriangles.TryGetValue(key, out int midpointIndex))
         {
@@ -149,8 +179,19 @@ public class IcosahedronGen : MonoBehaviour
         
         return midpointIndex;
     }
-    
-    
+
+    #endregion
+
+    #region Noise
+
+    private float GenerateNoise(float x, float detailScale)
+    {
+        float Noise = (x) / detailScale;
+
+        return Mathf.PerlinNoise(Noise, 1);
+    }
+
+    #endregion
 
     private void AssembleMesh()
     {
@@ -163,21 +204,43 @@ public class IcosahedronGen : MonoBehaviour
         meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
     }
     
+    #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         if(!Application.isPlaying) return;
-        Handles.color = Color.red;
-        for (int i = 0; i < vertices.Count; i++)
+
+        if (debugVertices)
         {
-            GUIStyle style = new GUIStyle()
+            for (int i = 0; i < vertices.Count; i++)
             {
-                fontSize = 25,
-                normal = new GUIStyleState()
+                GUIStyle style = new GUIStyle()
                 {
-                    textColor = Color.red
-                }
-            };
-            Handles.Label(new Vector3(vertices[i].x, vertices[i].y, vertices[i].z), i.ToString(), style);
+                    fontSize = 25,
+                    normal = new GUIStyleState()
+                    {
+                        textColor = Color.red
+                    }
+                };
+                Handles.Label(new Vector3(vertices[i].x, vertices[i].y, vertices[i].z), i.ToString(), style);
+            }
+        }
+
+        if (debugEdges)
+        {
+            Handles.color = lineColor;
+            for (int i = 0; i < triangles.Count; i += 3) // Move between each triangle
+            {
+                // get the triangle
+                int v1 = triangles[i];
+                int v2 = triangles[i + 1];
+                int v3 = triangles[i + 2];
+            
+                // Get the vertices
+                Handles.DrawLine(vertices[v1], vertices[v2], thickness);
+                Handles.DrawLine(vertices[v2], vertices[v3], thickness);
+                Handles.DrawLine(vertices[v3], vertices[v1], thickness);
+            }
         }
     }
+    #endif
 }
