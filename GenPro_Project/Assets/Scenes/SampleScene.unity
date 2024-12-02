@@ -251,9 +251,10 @@ MonoBehaviour:
   planetSubdivision: 3
   noiseHeight: 5
   detailScale: 8
+  enableNoise: 1
   debugVertices: 0
   debugEdges: 1
-  thickness: 2
+  thickness: 1
   lineColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!4 &959418770
 Transform:

@@ -19,6 +19,7 @@ public class IcosahedronGen : MonoBehaviour
     [Range(0,10)][SerializeField] private float detailScale = 1;
 
     [Header("Debug")] 
+    [SerializeField] private bool enableNoise = true;
     [SerializeField] private bool debugVertices = false;
     [SerializeField] private bool debugEdges = false;
     [Range(0,3)][SerializeField] private int thickness = 2;
@@ -57,11 +58,13 @@ public class IcosahedronGen : MonoBehaviour
     private void AddVertex(float x, float y, float z)
     {
         // normalize the vector for a unit sphere
-        Vector3 vertex = new Vector3(x, y, z).normalized * planetSizeMutl; 
-        
-        //Vector3 NoiseVertex = vertex * 
-        
-        vertices.Add(vertex); 
+        Vector3 vertex = new Vector3(x, y, z).normalized * planetSizeMutl;
+
+        Vector3 noiseVertex = Vector3.zero;
+        if(enableNoise) 
+            noiseVertex = vertex * (GenerateNoise(x, detailScale) * noiseHeight);
+
+        vertices.Add(enableNoise ? noiseVertex : vertex);
     }
     
     private void GetAllVertex()
@@ -184,9 +187,9 @@ public class IcosahedronGen : MonoBehaviour
 
     #region Noise
 
-    private float GenerateNoise(float x, float detailScale)
+    private float GenerateNoise(float value, float detailScale)
     {
-        float Noise = (x) / detailScale;
+        float Noise = (value) / detailScale;
 
         return Mathf.PerlinNoise(Noise, 1);
     }
