@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -11,19 +12,24 @@ public class IcosahedronGen : MonoBehaviour
     private MeshRenderer meshRenderer;
 
     [Header("Property")] 
-    [Range(0,50)][SerializeField] private int planetSizeMutl = 1;
+    //[Range(0,50)][SerializeField] private int planetSizeMutl = 1;
     [Range(0,6)][SerializeField] private int planetSubdivision = 1;
 
     [Header("Noise")] 
-    [Range(0,20)][SerializeField] private float noiseHeight = 1;
-    [Range(0,10)][SerializeField] private float detailScale = 1;
-
-    [Header("Debug")] 
     [SerializeField] private bool enableNoise = true;
+    [SerializeField] private bool useSeed;
+    [ShowIf("useSeed")][SerializeField] private int seed;
+    [ShowIf("enableNoise")][Range(0,0.01f)][SerializeField] private float frequency = 1;
+    [ShowIf("enableNoise")][Range(0,200)][SerializeField] private float amplitude = 1;
+    [ShowIf("enableNoise")][Range(0,100)][SerializeField] private float persistence = 1;
+    [ShowIf("enableNoise")][Range(0,25)][SerializeField] private int octave = 1;
+    private int randomSeed;
+    
+    [Header("Debug")] 
     [SerializeField] private bool debugVertices = false;
     [SerializeField] private bool debugEdges = false;
-    [Range(0,3)][SerializeField] private int thickness = 2;
-    [SerializeField] private Color lineColor = Color.green;
+    [ShowIf("debugEdges")][Range(0,3)][SerializeField] private int thickness = 2;
+    [ShowIf("debugEdges")][SerializeField] private Color lineColor = Color.green;
 
     private List<Vector3> vertices;
     private List<int> triangles;
@@ -31,15 +37,27 @@ public class IcosahedronGen : MonoBehaviour
 
     private void Awake()
     {
-        meshFilter = GetComponent<MeshFilter>();
-        meshRenderer = GetComponent<MeshRenderer>();
+        
     }
 
     private void Start()
     {
+        
+    }
+
+
+    [Button]
+    private void Generate()
+    {
+        meshFilter = GetComponent<MeshFilter>();
+        meshRenderer = GetComponent<MeshRenderer>();
+        
         vertices = new List<Vector3>();
         triangles = new List<int>();
         midTriangles = new Dictionary<long, int>();
+        
+        randomSeed = 0;
+        randomSeed = useSeed ? seed : Random.Range(-1000, 1000);
         
         GetAllVertex();
         GetAllTriangle();
@@ -58,11 +76,14 @@ public class IcosahedronGen : MonoBehaviour
     private void AddVertex(float x, float y, float z)
     {
         // normalize the vector for a unit sphere
-        Vector3 vertex = new Vector3(x, y, z).normalized * planetSizeMutl;
+        Vector3 vertex = new Vector3(x, y, z).normalized;
 
         Vector3 noiseVertex = Vector3.zero;
-        if(enableNoise) 
-            noiseVertex = vertex * (GenerateNoise(x, detailScale) * noiseHeight);
+        if (enableNoise)
+        {
+            noiseVertex = vertex * (Noise.Noise3D(x, y, z, frequency, amplitude, persistence, octave, randomSeed));
+        }
+            
 
         vertices.Add(enableNoise ? noiseVertex : vertex);
     }
@@ -181,17 +202,6 @@ public class IcosahedronGen : MonoBehaviour
         midTriangles[key] = midpointIndex; 
         
         return midpointIndex;
-    }
-
-    #endregion
-
-    #region Noise
-
-    private float GenerateNoise(float value, float detailScale)
-    {
-        float Noise = (value) / detailScale;
-
-        return Mathf.PerlinNoise(Noise, 1);
     }
 
     #endregion
