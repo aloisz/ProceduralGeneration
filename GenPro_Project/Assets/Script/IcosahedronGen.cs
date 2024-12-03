@@ -34,7 +34,7 @@ public class IcosahedronGen : MonoBehaviour
 
     private void Start()
     {
-        
+        Generate();
     }
 
 
@@ -215,21 +215,60 @@ public class IcosahedronGen : MonoBehaviour
 
     private void VertexColor(Mesh mesh)
     {
-        Color[] colors = new Color[vertices.Count];
+        /*Color[] colors = new Color[vertices.Count];
 
         for (int i = 0; i < vertices.Count; i++)
         {
             for (int j = 0; j < _planetSo.VertexColors.Count; j++)
             {
-                if (Vector3.Distance(vertices[i], transform.position) >= _planetSo.VertexColors[j].dist)
+                if (Vector3.Distance(vertices[i] + transform.position, transform.localPosition) >= _planetSo.VertexColors[j].dist)
                 {
                     colors[i] = _planetSo.VertexColors[j].color;
                 }
             }
         }
-        mesh.colors = colors;
+        mesh.colors = colors;*/
+        
+        /*float minY = float.MaxValue;
+        float maxY = float.MinValue;
+        foreach (var vertex in vertices)
+        {
+            if (vertex.y < minY) minY = vertex.y;
+            if (vertex.y > maxY) maxY = vertex.y;
+        }
+
+        Color[] vertexColors = new Color[vertices.Count];
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            float normalizedY = Mathf.InverseLerp(minY, maxY, );
+            vertexColors[i] = _planetSo.gradient.Evaluate(normalizedY);
+        }
+
+        mesh.colors = vertexColors;*/
+
+        float min = float.MaxValue;
+        float max = float.MinValue;
+        
+        foreach (var vertex in vertices)
+        {
+            float distance = vertex.magnitude;
+            if (vertex.y < min) min = distance;
+            if (vertex.y > max) max = distance;
+        }
+
+        Color[] vertexColors = new Color[vertices.Count];
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            var distance = Mathf.Sqrt((vertices[i].x * vertices[i].x) + (vertices[i].y * vertices[i].y) +
+                                      (vertices[i].z * vertices[i].z));
+                
+            var normalizedDist = (distance - min) / (max - min);
+
+            vertexColors[i] = _planetSo.gradient.Evaluate(normalizedDist);
+        }
+        mesh.colors = vertexColors;
     }
-    
+
     #if UNITY_EDITOR
     [ExecuteAlways]
     private void OnDrawGizmos()
@@ -261,7 +300,7 @@ public class IcosahedronGen : MonoBehaviour
                 int v1 = triangles[i];
                 int v2 = triangles[i + 1];
                 int v3 = triangles[i + 2];
-            
+
                 // Get the vertices
                 Handles.DrawLine(vertices[v1], vertices[v2], thickness);
                 Handles.DrawLine(vertices[v2], vertices[v3], thickness);

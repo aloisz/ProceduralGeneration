@@ -21,6 +21,7 @@ public class PlanetSO : ScriptableObject
 
     [Header("VertexColor")] 
     public List<VertexColor> VertexColors;
+    public Gradient gradient;
 }
 
 [System.Serializable]
