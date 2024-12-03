@@ -14,6 +14,7 @@ public class IcosahedronGen : MonoBehaviour
     [Header("Property")] 
     //[Range(0,50)][SerializeField] private int planetSizeMutl = 1;
     [Range(0,6)][SerializeField] private int planetSubdivision = 1;
+    [SerializeField] private Material _material;
 
     [Header("Noise")] 
     [SerializeField] private bool enableNoise = true;
@@ -214,10 +215,11 @@ public class IcosahedronGen : MonoBehaviour
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
         
-        meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
+        meshRenderer.sharedMaterial = new Material(_material);
     }
     
     #if UNITY_EDITOR
+    [ExecuteAlways]
     private void OnDrawGizmos()
     {
         if(!Application.isPlaying) return;
