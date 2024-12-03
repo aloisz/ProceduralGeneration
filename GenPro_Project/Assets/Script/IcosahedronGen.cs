@@ -10,7 +10,7 @@ public class IcosahedronGen : MonoBehaviour
 {
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
-
+    private MeshCollider meshCollider;
 
     [Header("SO")] 
     [Expandable] [SerializeField] private PlanetSO _planetSo;
@@ -26,6 +26,8 @@ public class IcosahedronGen : MonoBehaviour
     private List<Vector3> vertices;
     private List<int> triangles;
     private Dictionary<long, int> midTriangles;
+
+    private List<GameObject> allDecorativeOBJ;
 
     private void Awake()
     {
@@ -43,12 +45,14 @@ public class IcosahedronGen : MonoBehaviour
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
+        meshCollider = GetComponent<MeshCollider>();
 
         gameObject.name = _planetSo.planetName;
         
         vertices = new List<Vector3>();
         triangles = new List<int>();
         midTriangles = new Dictionary<long, int>();
+        allDecorativeOBJ = new List<GameObject>();
         
         randomSeed = 0;
         randomSeed = _planetSo.useSeed ? _planetSo.seed : Random.Range(-1000, 1000);
@@ -209,8 +213,10 @@ public class IcosahedronGen : MonoBehaviour
         meshFilter.mesh = mesh;
         
         meshRenderer.sharedMaterial = new Material(_planetSo._material);
-
+        meshCollider.sharedMesh = mesh;
+            
         VertexColor(mesh);
+        SpawnDecoration();
     }
 
     private void VertexColor(Mesh mesh)
@@ -267,6 +273,36 @@ public class IcosahedronGen : MonoBehaviour
             vertexColors[i] = _planetSo.gradient.Evaluate(normalizedDist);
         }
         mesh.colors = vertexColors;
+    }
+
+    private void SpawnDecoration()
+    {
+        if (allDecorativeOBJ.Count != 0)
+        {
+            foreach (var obj in allDecorativeOBJ)
+            {
+                Destroy(obj);
+            }
+            allDecorativeOBJ.Clear();
+        }
+        
+        
+        RaycastHit hit;
+        for (int i = 0; i < _planetSo.Decorations.Count; i++)
+        {
+            for (int j = 0; j < _planetSo.Decorations[i].amountToSpawn; j++)
+            {
+                Vector3 dir = Random.onUnitSphere;
+                Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
+                if (Physics.Raycast(transform.position, dir, out hit, 50))
+                {
+                    if (hit.transform.GetComponent<Collider>() != null)
+                    {
+                        Debug.DrawLine(transform.position, hit.point, Color.green, 1);
+                    }
+                }
+            }
+        }
     }
 
     #if UNITY_EDITOR

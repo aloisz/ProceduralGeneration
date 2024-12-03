@@ -18,15 +18,20 @@ public class PlanetSO : ScriptableObject
     [ShowIf("enableNoise")][Range(0,200)]public float amplitude = 1;
     [ShowIf("enableNoise")][Range(0,100)]public float persistence = 1;
     [ShowIf("enableNoise")][Range(0,25)]public int octave = 1;
-
-    [Header("VertexColor")] 
-    public List<VertexColor> VertexColors;
+    
+    
+    [Header("VertexColor")]
     public Gradient gradient;
+    
+    [Header("Decoration")]
+    public List<Decoration> Decorations;
 }
 
 [System.Serializable]
-public class VertexColor
+public class Decoration
 {
-    public Color color;
+    public GameObject go;
+    public int amountToSpawn;
+    [MinMaxSlider(0,1f)]public Vector2 scale;
     public float dist;
 }

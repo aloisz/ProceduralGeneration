@@ -22,17 +22,6 @@ MonoBehaviour:
   amplitude: 20
   persistence: 1
   octave: 20
-  VertexColors:
-  - color: {r: 0.21186365, g: 0.28471547, b: 0.6509434, a: 1}
-    dist: 8.3
-  - color: {r: 0.17621933, g: 0.8301887, b: 0.82313555, a: 1}
-    dist: 8.5
-  - color: {r: 0.3476326, g: 0.7924528, b: 0.4837956, a: 1}
-    dist: 9
-  - color: {r: 0.18783373, g: 0.6320754, b: 0.32110623, a: 1}
-    dist: 9.5
-  - color: {r: 1, g: 1, b: 1, a: 1}
-    dist: 9.8
   gradient:
     serializedVersion: 2
     key0: {r: 0.21176472, g: 0.28627452, b: 0.6509804, a: 1}
@@ -63,3 +52,8 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
+  Decorations:
+  - go: {fileID: 9069115365609291303, guid: 60f79905accf3b24fa0114b941f1aac0, type: 3}
+    amountToSpawn: 150
+    scale: {x: 0.23925564, y: 0.64687634}
+    dist: 0
