@@ -2,16 +2,16 @@ using UnityEngine;
 
 public static class Noise 
 {
-    public static float Noise3D(float x, float y, float z, float frequency, float amplitude, float persistence, int octave, int seed)
+    public static float Noise3D(float x, float y, float z, float frequency, int subdivision, float amplitude, float persistence, int octave, int seed)
     {
         float noise = 0.0f;
 
         for (int i = 0; i < octave; ++i)
         {
             // Get all permutations of noise for each individual axis
-            float noiseXY = Mathf.PerlinNoise(x * frequency + seed, y * frequency + seed) * amplitude;
-            float noiseXZ = Mathf.PerlinNoise(x * frequency + seed, z * frequency + seed) * amplitude;
-            float noiseYZ = Mathf.PerlinNoise(y * frequency + seed, z * frequency + seed) * amplitude;
+            float noiseXY = Mathf.PerlinNoise(x * frequency + seed, y * (frequency / subdivision) + seed) * amplitude;
+            float noiseXZ = Mathf.PerlinNoise(x * frequency + seed, z * (frequency / subdivision) + seed) * amplitude;
+            float noiseYZ = Mathf.PerlinNoise(y * frequency + seed, z * (frequency / subdivision) + seed) * amplitude;
 
             // Reverse of the permutations of noise for each individual axis
             /*float noiseYX = Mathf.PerlinNoise(y * frequency + seed, x * frequency + seed) * amplitude;

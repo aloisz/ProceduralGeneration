@@ -11,19 +11,10 @@ public class IcosahedronGen : MonoBehaviour
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
-    [Header("Property")] 
-    //[Range(0,50)][SerializeField] private int planetSizeMutl = 1;
-    [Range(0,6)][SerializeField] private int planetSubdivision = 1;
-    [SerializeField] private Material _material;
 
-    [Header("Noise")] 
-    [SerializeField] private bool enableNoise = true;
-    [SerializeField] private bool useSeed;
-    [ShowIf("useSeed")][SerializeField] private int seed;
-    [ShowIf("enableNoise")][Range(0,0.01f)][SerializeField] private float frequency = 1;
-    [ShowIf("enableNoise")][Range(0,200)][SerializeField] private float amplitude = 1;
-    [ShowIf("enableNoise")][Range(0,100)][SerializeField] private float persistence = 1;
-    [ShowIf("enableNoise")][Range(0,25)][SerializeField] private int octave = 1;
+    [Header("SO")] 
+    [Expandable] [SerializeField] private PlanetSO _planetSo;
+    
     private int randomSeed;
     
     [Header("Debug")] 
@@ -52,18 +43,20 @@ public class IcosahedronGen : MonoBehaviour
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
+
+        gameObject.name = _planetSo.planetName;
         
         vertices = new List<Vector3>();
         triangles = new List<int>();
         midTriangles = new Dictionary<long, int>();
         
         randomSeed = 0;
-        randomSeed = useSeed ? seed : Random.Range(-1000, 1000);
+        randomSeed = _planetSo.useSeed ? _planetSo.seed : Random.Range(-1000, 1000);
         
         GetAllVertex();
         GetAllTriangle();
         
-        for (int i = 0; i < planetSubdivision; i++)
+        for (int i = 0; i < _planetSo.planetSubdivision; i++)
         {
             Subdivision();
         }
@@ -80,13 +73,13 @@ public class IcosahedronGen : MonoBehaviour
         Vector3 vertex = new Vector3(x, y, z).normalized;
 
         Vector3 noiseVertex = Vector3.zero;
-        if (enableNoise)
+        if (_planetSo.enableNoise)
         {
-            noiseVertex = vertex * (Noise.Noise3D(x, y, z, frequency, amplitude, persistence, octave, randomSeed));
+            noiseVertex = vertex * (Noise.Noise3D(x, y, z, _planetSo.frequency, _planetSo.planetSubdivision, _planetSo.amplitude, _planetSo.persistence, _planetSo.octave, randomSeed));
         }
             
 
-        vertices.Add(enableNoise ? noiseVertex : vertex);
+        vertices.Add(_planetSo.enableNoise ? noiseVertex : vertex);
     }
     
     private void GetAllVertex()
@@ -215,7 +208,26 @@ public class IcosahedronGen : MonoBehaviour
         mesh.RecalculateNormals();
         meshFilter.mesh = mesh;
         
-        meshRenderer.sharedMaterial = new Material(_material);
+        meshRenderer.sharedMaterial = new Material(_planetSo._material);
+
+        VertexColor(mesh);
+    }
+
+    private void VertexColor(Mesh mesh)
+    {
+        Color[] colors = new Color[vertices.Count];
+
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            for (int j = 0; j < _planetSo.VertexColors.Count; j++)
+            {
+                if (Vector3.Distance(vertices[i], transform.position) >= _planetSo.VertexColors[j].dist)
+                {
+                    colors[i] = _planetSo.VertexColors[j].color;
+                }
+            }
+        }
+        mesh.colors = colors;
     }
     
     #if UNITY_EDITOR

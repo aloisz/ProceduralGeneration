@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b367fecd11ffd83419ab778e686616c6, type: 3}
+  m_Name: Terre
+  m_EditorClassIdentifier: 
+  planetName: Terre
+  planetSubdivision: 4
+  _material: {fileID: 2100000, guid: f071233c9055cb94a844fe0b250ce090, type: 2}
+  enableNoise: 1
+  useSeed: 0
+  seed: 0
+  frequency: 0.00001
+  amplitude: 20
+  persistence: 1
+  octave: 20
+  VertexColors:
+  - color: {r: 0.21186365, g: 0.28471547, b: 0.6509434, a: 1}
+    dist: 8.3
+  - color: {r: 0.17621933, g: 0.8301887, b: 0.82313555, a: 1}
+    dist: 8.5
+  - color: {r: 0.3476326, g: 0.7924528, b: 0.4837956, a: 1}
+    dist: 9
+  - color: {r: 0.18783373, g: 0.6320754, b: 0.32110623, a: 1}
+    dist: 9.5
+  - color: {r: 1, g: 1, b: 1, a: 1}
+    dist: 9.8
