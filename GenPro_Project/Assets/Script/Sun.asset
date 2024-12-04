@@ -13,16 +13,17 @@ MonoBehaviour:
   m_Name: Sun
   m_EditorClassIdentifier: 
   planetName: Sun
+  planetSize: 50
   planetSubdivision: 3
-  _material: {fileID: 0}
+  _material: {fileID: 2100000, guid: 5d9c80c23d55b27498dfbd405c893556, type: 2}
   enableNoise: 1
   useSeed: 0
   seed: 0
+  noiseScale: 1
   frequency: 0
   amplitude: 129
   persistence: 1
   octave: 1
-  VertexColors: []
   gradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
@@ -53,3 +54,4 @@ MonoBehaviour:
     m_ColorSpace: -1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  Decorations: []
