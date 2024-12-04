@@ -57,7 +57,7 @@ MonoBehaviour:
   Decorations:
   - name: Tree
     gameObject: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310, type: 3}
-    densityToSpawn: 150
-    minMaxSpawnPos: {x: 0, y: 6.2441025}
+    probability: 0.217
+    minMaxSpawnPos: {x: 0.25, y: 0.55}
     SizeOfObj: {x: 0.013307987, y: 0.0148289}
     minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}

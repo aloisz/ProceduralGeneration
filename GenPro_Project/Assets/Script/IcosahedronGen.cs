@@ -84,7 +84,7 @@ public class IcosahedronGen : MonoBehaviour
             VertexColor(mesh);
         
         if(enableDecoration)
-            SpawnDecoration();
+            SpawnDecoration(mesh);
     }
 
     #region Vertex 
@@ -291,86 +291,59 @@ public class IcosahedronGen : MonoBehaviour
         mesh.colors = vertexColors;
     }
 
-    private void SpawnDecoration()
+    private void SpawnDecoration(Mesh mesh)
     {
         if (ObjData.Count != 0)
         {
             ClearData();
         }
         
+        float min = float.MaxValue;
+        float max = float.MinValue;
         
-        RaycastHit hit;
-        
-        for (int i = 0; i < _planetSo.Decorations.Count; i++)
+        foreach (var vertex in vertices)
         {
-            /*for (int j = 0; j < _planetSo.Decorations[i].densityToSpawn; j++)
-            {
-                Vector3 dir = Random.onUnitSphere;
-                //Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
-                if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
-                
-                if (hit.transform.GetComponent<MeshCollider>() == null) continue;
-                
-                if (!(hit.point.y >= _planetSo.Decorations[j].minMaxSpawnPos.x) ||
-                    !(hit.point.y <= _planetSo.Decorations[j].minMaxSpawnPos.y)) continue;
-                
-                // Transform
-                GameObject obj = Instantiate(_planetSo.Decorations[j].gameObject, hit.point, Quaternion.identity, transform);
+            float distance = vertex.magnitude;
+            if (distance < min) min = distance;
+            if (distance > max) max = distance;
+        }
 
-                // Scale
-                var randomScale = Random.Range(_planetSo.Decorations[j].SizeOfObj.x,
-                    _planetSo.Decorations[j].SizeOfObj.y);
-                obj.transform.localScale = 
-                    new Vector3(randomScale, randomScale, randomScale);
-                
-                //inclination of the normals
-                Quaternion spawnRot = Quaternion.SlerpUnclamped(
-                    Quaternion.FromToRotation(Vector3.up, hit.normal), 
-                    Quaternion.identity, 
-                    Random.Range(_planetSo.Decorations[j].minMaxObjectNormalRotation.x, _planetSo.Decorations[j].minMaxObjectNormalRotation.y));
-                obj.transform.rotation *= spawnRot * Quaternion.Euler(obj.transform.rotation.x, obj.transform.rotation.y, obj.transform.rotation.z);
-                
-                obj.name = _planetSo.Decorations[j].name;
-                
-                // Data
-                ObjData.Add(obj);
-                countDensity++;
-            }*/
+        Color[] vertexColors = mesh.colors;
+        RaycastHit hit;
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            Color vertexColor = vertexColors[i];
+            Vector3 dir = vertices[i].normalized;
+
+            if (!Physics.Raycast(transform.position, dir, out hit, Mathf.Infinity)) continue;
+            if (hit.transform.GetComponent<MeshCollider>() == null) continue;
             
-            var countIndex = 0;
-            do
+            for (var j = 0; j < _planetSo.Decorations.Count; j++)
             {
-                Vector3 dir = Random.onUnitSphere;
-                //Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
-                if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
+                var decoration = _planetSo.Decorations[j];
                 
-                if (hit.transform.GetComponent<MeshCollider>() == null) continue;
-                
-                if (!(hit.point.y >= _planetSo.Decorations[countIndex].minMaxSpawnPos.x) ||
-                    !(hit.point.y <= _planetSo.Decorations[countIndex].minMaxSpawnPos.y)) continue;
-                
-                // Transform
-                GameObject obj = Instantiate(_planetSo.Decorations[countIndex].gameObject, hit.point, Quaternion.identity, transform);
+                var randomValue = Random.value;
+                if(randomValue >= decoration.probability) break;
+                    
+                if (!(vertexColor.r >= decoration.minMaxSpawnPos.x) ||
+                    !(vertexColor.r <= decoration.minMaxSpawnPos.y)) continue;
 
-                // Scale
-                var randomScale = Random.Range(_planetSo.Decorations[countIndex].SizeOfObj.x,
-                    _planetSo.Decorations[countIndex].SizeOfObj.y);
-                obj.transform.localScale = 
-                    new Vector3(randomScale, randomScale, randomScale);
-                
-                //inclination of the normals
+                GameObject obj = Instantiate(decoration.gameObject, hit.point, Quaternion.identity, transform);
+
+                float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
+                obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+
                 Quaternion spawnRot = Quaternion.SlerpUnclamped(
-                    Quaternion.FromToRotation(Vector3.up, hit.normal), 
-                    Quaternion.identity, 
-                    Random.Range(_planetSo.Decorations[countIndex].minMaxObjectNormalRotation.x, _planetSo.Decorations[countIndex].minMaxObjectNormalRotation.y));
-                obj.transform.rotation *= spawnRot * Quaternion.Euler(obj.transform.rotation.x, obj.transform.rotation.y, obj.transform.rotation.z);
-                
-                obj.name = _planetSo.Decorations[countIndex].name;
-                
-                // Data
+                    Quaternion.FromToRotation(Vector3.up, hit.normal),
+                    Quaternion.identity,
+                    Random.Range(decoration.minMaxObjectNormalRotation.x, decoration.minMaxObjectNormalRotation.y)
+                );
+                obj.transform.rotation *= spawnRot;
+
+                obj.name = decoration.name;
                 ObjData.Add(obj);
-                countDensity++;
-            } while (countDensity != _planetSo.Decorations[countIndex].densityToSpawn);
+                break;
+            }
         }
     }
     
