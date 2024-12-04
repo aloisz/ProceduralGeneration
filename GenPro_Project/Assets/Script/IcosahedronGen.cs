@@ -16,6 +16,12 @@ public class IcosahedronGen : MonoBehaviour
     [Expandable] [SerializeField] private PlanetSO _planetSo;
     
     private int randomSeed;
+
+    [Header("Vertex painting")] [SerializeField]
+    private bool enableVertexPainting;
+    
+    [Header("Decoration")] [SerializeField]
+    private bool enableDecoration;
     
     [Header("Debug")] 
     [SerializeField] private bool debugVertices = false;
@@ -47,6 +53,10 @@ public class IcosahedronGen : MonoBehaviour
         meshRenderer = GetComponent<MeshRenderer>();
         meshCollider = GetComponent<MeshCollider>();
 
+        transform.localScale = new Vector3(_planetSo.planetSize, _planetSo.planetSize, _planetSo.planetSize);
+        
+        Mesh mesh = new Mesh();
+
         gameObject.name = _planetSo.planetName;
         
         vertices = new List<Vector3>();
@@ -59,14 +69,20 @@ public class IcosahedronGen : MonoBehaviour
         
         GetAllVertex();
         GetAllTriangle();
-        
         for (int i = 0; i < _planetSo.planetSubdivision; i++)
         {
             Subdivision();
         }
         
+        ApplyNoise();
+
+        AssembleMesh(mesh);
         
-        AssembleMesh();
+        if(enableVertexPainting)
+            VertexColor(mesh);
+        
+        if(enableDecoration)
+            SpawnDecoration();
     }
 
     #region Vertex 
@@ -75,15 +91,7 @@ public class IcosahedronGen : MonoBehaviour
     {
         // normalize the vector for a unit sphere
         Vector3 vertex = new Vector3(x, y, z).normalized;
-
-        Vector3 noiseVertex = Vector3.zero;
-        if (_planetSo.enableNoise)
-        {
-            noiseVertex = vertex * (Noise.Noise3D(x, y, z, _planetSo.frequency, _planetSo.planetSubdivision, _planetSo.amplitude, _planetSo.persistence, _planetSo.octave, randomSeed));
-        }
-            
-
-        vertices.Add(_planetSo.enableNoise ? noiseVertex : vertex);
+        vertices.Add(vertex);
     }
     
     private void GetAllVertex()
@@ -185,7 +193,7 @@ public class IcosahedronGen : MonoBehaviour
         long min = Mathf.Min(v1, v2);
         long max = Mathf.Max(v1, v2);
         // Unique Key
-        long key = (min*32*32) + max; 
+        long key = (min*128*128) + max; 
 
         if (midTriangles.TryGetValue(key, out int midpointIndex))
         {
@@ -204,19 +212,26 @@ public class IcosahedronGen : MonoBehaviour
 
     #endregion
 
-    private void AssembleMesh()
+    private void ApplyNoise()
     {
-        Mesh mesh = new Mesh();
+        for (int i = 0; i < vertices.Count; i++)
+        {
+            float noiseValue = Noise.Generate3DNoise(vertices[i], _planetSo.noiseScale, _planetSo.frequency, _planetSo.amplitude, _planetSo.persistence, _planetSo.octave, randomSeed);
+            vertices[i] = vertices[i].normalized * (1 + noiseValue); // Adjust vertex position
+        }
+    }
+    
+
+    private void AssembleMesh(Mesh mesh)
+    {
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
         meshFilter.mesh = mesh;
         
         meshRenderer.sharedMaterial = new Material(_planetSo._material);
         meshCollider.sharedMesh = mesh;
-            
-        VertexColor(mesh);
-        SpawnDecoration();
     }
 
     private void VertexColor(Mesh mesh)

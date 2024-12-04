@@ -13,26 +13,17 @@ MonoBehaviour:
   m_Name: XB2
   m_EditorClassIdentifier: 
   planetName: XB2
+  planetSize: 20
   planetSubdivision: 4
   _material: {fileID: 2100000, guid: f071233c9055cb94a844fe0b250ce090, type: 2}
   enableNoise: 1
   useSeed: 0
   seed: 0
-  frequency: 0.0000008
-  amplitude: 45
+  noiseScale: 0.1
+  frequency: 1
+  amplitude: 1
   persistence: 1
   octave: 20
-  VertexColors:
-  - color: {r: 0.7169812, g: 0.18600929, b: 0.18600929, a: 1}
-    dist: 8.3
-  - color: {r: 0.9528302, g: 0.4269758, b: 0.4269758, a: 1}
-    dist: 20
-  - color: {r: 0.7649831, g: 0.7921569, b: 0.34901962, a: 1}
-    dist: 21
-  - color: {r: 0.6159582, g: 0.6313726, b: 0.18823527, a: 1}
-    dist: 22
-  - color: {r: 1, g: 1, b: 1, a: 1}
-    dist: 23
   gradient:
     serializedVersion: 2
     key0: {r: 0.7176471, g: 0.18431373, b: 0.18431373, a: 1}
@@ -63,3 +54,4 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
+  Decorations: []

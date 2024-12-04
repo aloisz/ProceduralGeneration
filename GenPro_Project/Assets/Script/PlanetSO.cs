@@ -7,6 +7,7 @@ public class PlanetSO : ScriptableObject
 {
     [Header("Property")] 
     public string planetName;
+    [Range(0,50)]public int planetSize = 1;
     [Range(0,6)]public int planetSubdivision = 1;
     public Material _material;
 
@@ -14,10 +15,11 @@ public class PlanetSO : ScriptableObject
     public bool enableNoise = true;
     public bool useSeed;
     [ShowIf("useSeed")]public int seed;
-    [ShowIf("enableNoise")][Range(0,0.01f)]public float frequency = 1;
-    [ShowIf("enableNoise")][Range(0,200)]public float amplitude = 1;
-    [ShowIf("enableNoise")][Range(0,100)]public float persistence = 1;
-    [ShowIf("enableNoise")][Range(0,25)]public int octave = 1;
+    [ShowIf("enableNoise")][Range(0,100)]public float noiseScale = 1f;
+    [ShowIf("enableNoise")][Range(0,10)]public float frequency = 1;
+    [ShowIf("enableNoise")][Range(0,20)]public float amplitude = 1;
+    [ShowIf("enableNoise")][Range(0,10)]public float persistence = 1;
+    [ShowIf("enableNoise")][Range(0,50)]public int octave = 1;
     
     
     [Header("VertexColor")]

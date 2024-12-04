@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: Terre
   m_EditorClassIdentifier: 
   planetName: Terre
-  planetSubdivision: 4
+  planetSize: 7
+  planetSubdivision: 6
   _material: {fileID: 2100000, guid: f071233c9055cb94a844fe0b250ce090, type: 2}
   enableNoise: 1
   useSeed: 0
   seed: 0
-  frequency: 0.00001
+  noiseScale: 0.2
+  frequency: 0.16
   amplitude: 20
-  persistence: 1
-  octave: 20
+  persistence: 0.8
+  octave: 31
   gradient:
     serializedVersion: 2
     key0: {r: 0.21176472, g: 0.28627452, b: 0.6509804, a: 1}
