@@ -58,6 +58,28 @@ MonoBehaviour:
   - name: Tree
     gameObject: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310, type: 3}
     probability: 0.217
-    minMaxSpawnPos: {x: 0.25, y: 0.55}
+    densityToSpawn: 0
+    minMaxSpawnPos: {x: 0.26, y: 0.55}
     SizeOfObj: {x: 0.013307987, y: 0.0148289}
+    minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
+  - name: PineTree
+    gameObject: {fileID: 4661435515762455780, guid: e289bf5debb17f6459818c207d781953, type: 3}
+    probability: 0.517
+    densityToSpawn: 0
+    minMaxSpawnPos: {x: 0.8, y: 0.9}
+    SizeOfObj: {x: 0.034043476, y: 0.044337094}
+    minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
+  - name: Rock
+    gameObject: {fileID: 8783306491908617939, guid: f02116c209ecd9e488fc4d2cd8996133, type: 3}
+    probability: 0.606
+    densityToSpawn: 0
+    minMaxSpawnPos: {x: 0.25, y: 0.9}
+    SizeOfObj: {x: 0.012510468, y: 0.02439912}
+    minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
+  - name: Grass
+    gameObject: {fileID: 8903058273634794869, guid: f1fc5bb90ac285e4486771552d63bcb8, type: 3}
+    probability: 1
+    densityToSpawn: 0
+    minMaxSpawnPos: {x: 0.3, y: 0.8}
+    SizeOfObj: {x: 0.1, y: 0.2}
     minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}

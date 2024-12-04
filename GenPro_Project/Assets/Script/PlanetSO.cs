@@ -35,7 +35,9 @@ public class Decoration
     public string name;
     public GameObject gameObject;
     [Range(0,1)] public float probability;
-    [MinMaxSlider(0, 20)] public Vector2 minMaxSpawnPos;
-    [MinMaxSlider(.01f, 0.1f)] public Vector2 SizeOfObj;
+    [Range(0,10000)] public float densityToSpawn;
+    [MinMaxSlider(0, 1)] public Vector2 minMaxSpawnPos;
+    [MinMaxSlider(0, 50)] public Vector2 minMaxSpawnPosTEST;
+    [MinMaxSlider(.01f, .2f)] public Vector2 SizeOfObj;
     [MinMaxSlider(0, 1)]public Vector2 minMaxObjectNormalRotation;
 }
