@@ -340,7 +340,8 @@ public class IcosahedronGen : MonoBehaviour
                     
                 if(IsColorClose(sampledColor, decoration.color, decoration.colorTolerance))
                 {
-                    GameObject obj = Instantiate(decoration.gameObject, hit.point, Quaternion.identity, transform);
+                    int randomGO = Random.Range(0, decoration.ObjDecorations.Count);
+                    GameObject obj = Instantiate(decoration.ObjDecorations[randomGO].gameObject, hit.point, Quaternion.identity, transform);
                     
                     float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
                     obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);

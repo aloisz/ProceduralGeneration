@@ -33,11 +33,17 @@ public class PlanetSO : ScriptableObject
 public class Decoration
 {
     public string name;
-    public GameObject gameObject;
+    public List<ObjDecoration> ObjDecorations;
     [Range(0,1)] public float probability;
     [MinMaxSlider(0, 1)] public Vector2 minMaxSpawnPos;
     [MinMaxSlider(.01f, .2f)] public Vector2 SizeOfObj;
     [MinMaxSlider(0, 1)]public Vector2 minMaxObjectNormalRotation;
     public Color color;
     public float colorTolerance;
+}
+
+[System.Serializable]
+public class ObjDecoration
+{
+    public GameObject gameObject;
 }
