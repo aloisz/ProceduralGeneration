@@ -32,8 +32,10 @@ public class PlanetSO : ScriptableObject
 [System.Serializable]
 public class Decoration
 {
-    public GameObject go;
-    public int amountToSpawn;
-    [MinMaxSlider(0,1f)]public Vector2 scale;
-    public float dist;
+    public string name;
+    public GameObject gameObject;
+    public int densityToSpawn;
+    [MinMaxSlider(0, 100)] public Vector2 minMaxSpawnPos;
+    [MinMaxSlider(.01f, 0.1f)] public Vector2 SizeOfObj;
+    [MinMaxSlider(0, 1)]public Vector2 minMaxObjectNormalRotation;
 }

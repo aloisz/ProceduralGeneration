@@ -33,7 +33,8 @@ public class IcosahedronGen : MonoBehaviour
     private List<int> triangles;
     private Dictionary<long, int> midTriangles;
 
-    private List<GameObject> allDecorativeOBJ;
+    private List<GameObject> ObjData;
+    private int countDensity;
 
     private void Awake()
     {
@@ -62,13 +63,14 @@ public class IcosahedronGen : MonoBehaviour
         vertices = new List<Vector3>();
         triangles = new List<int>();
         midTriangles = new Dictionary<long, int>();
-        allDecorativeOBJ = new List<GameObject>();
+        ObjData = new List<GameObject>();
         
         randomSeed = 0;
         randomSeed = _planetSo.useSeed ? _planetSo.seed : Random.Range(-1000, 1000);
         
         GetAllVertex();
         GetAllTriangle();
+        
         for (int i = 0; i < _planetSo.planetSubdivision; i++)
         {
             Subdivision();
@@ -273,51 +275,114 @@ public class IcosahedronGen : MonoBehaviour
         foreach (var vertex in vertices)
         {
             float distance = vertex.magnitude;
-            if (vertex.y < min) min = distance;
-            if (vertex.y > max) max = distance;
+            if (distance < min) min = distance;
+            if (distance > max) max = distance;
         }
-
+        
         Color[] vertexColors = new Color[vertices.Count];
         for (int i = 0; i < vertices.Count; i++)
         {
-            var distance = Mathf.Sqrt((vertices[i].x * vertices[i].x) + (vertices[i].y * vertices[i].y) +
-                                      (vertices[i].z * vertices[i].z));
-                
-            var normalizedDist = (distance - min) / (max - min);
-
-            vertexColors[i] = _planetSo.gradient.Evaluate(normalizedDist);
+            float distance = (vertices[i]).magnitude; 
+            float normalizedDist = (distance - min) / (max - min); 
+            vertexColors[i] = _planetSo.gradient.Evaluate(normalizedDist); 
         }
+
+        mesh.colors = vertexColors;
         mesh.colors = vertexColors;
     }
 
     private void SpawnDecoration()
     {
-        if (allDecorativeOBJ.Count != 0)
+        if (ObjData.Count != 0)
         {
-            foreach (var obj in allDecorativeOBJ)
-            {
-                Destroy(obj);
-            }
-            allDecorativeOBJ.Clear();
+            ClearData();
         }
         
         
         RaycastHit hit;
+        
         for (int i = 0; i < _planetSo.Decorations.Count; i++)
         {
-            for (int j = 0; j < _planetSo.Decorations[i].amountToSpawn; j++)
+            /*for (int j = 0; j < _planetSo.Decorations[i].densityToSpawn; j++)
             {
                 Vector3 dir = Random.onUnitSphere;
-                Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
-                if (Physics.Raycast(transform.position, dir, out hit, 50))
-                {
-                    if (hit.transform.GetComponent<Collider>() != null)
-                    {
-                        Debug.DrawLine(transform.position, hit.point, Color.green, 1);
-                    }
-                }
-            }
+                //Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
+                if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
+                
+                if (hit.transform.GetComponent<MeshCollider>() == null) continue;
+                
+                if (!(hit.point.y >= _planetSo.Decorations[j].minMaxSpawnPos.x) ||
+                    !(hit.point.y <= _planetSo.Decorations[j].minMaxSpawnPos.y)) continue;
+                
+                // Transform
+                GameObject obj = Instantiate(_planetSo.Decorations[j].gameObject, hit.point, Quaternion.identity, transform);
+
+                // Scale
+                var randomScale = Random.Range(_planetSo.Decorations[j].SizeOfObj.x,
+                    _planetSo.Decorations[j].SizeOfObj.y);
+                obj.transform.localScale = 
+                    new Vector3(randomScale, randomScale, randomScale);
+                
+                //inclination of the normals
+                Quaternion spawnRot = Quaternion.SlerpUnclamped(
+                    Quaternion.FromToRotation(Vector3.up, hit.normal), 
+                    Quaternion.identity, 
+                    Random.Range(_planetSo.Decorations[j].minMaxObjectNormalRotation.x, _planetSo.Decorations[j].minMaxObjectNormalRotation.y));
+                obj.transform.rotation *= spawnRot * Quaternion.Euler(obj.transform.rotation.x, obj.transform.rotation.y, obj.transform.rotation.z);
+                
+                obj.name = _planetSo.Decorations[j].name;
+                
+                // Data
+                ObjData.Add(obj);
+                countDensity++;
+            }*/
+            
+            var countIndex = 0;
+            do
+            {
+                Vector3 dir = Random.onUnitSphere;
+                //Debug.DrawRay(transform.position, dir * 50, Color.red, 1);
+                if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
+                
+                if (hit.transform.GetComponent<MeshCollider>() == null) continue;
+                
+                if (!(hit.point.y >= _planetSo.Decorations[countIndex].minMaxSpawnPos.x) ||
+                    !(hit.point.y <= _planetSo.Decorations[countIndex].minMaxSpawnPos.y)) continue;
+                
+                // Transform
+                GameObject obj = Instantiate(_planetSo.Decorations[countIndex].gameObject, hit.point, Quaternion.identity, transform);
+
+                // Scale
+                var randomScale = Random.Range(_planetSo.Decorations[countIndex].SizeOfObj.x,
+                    _planetSo.Decorations[countIndex].SizeOfObj.y);
+                obj.transform.localScale = 
+                    new Vector3(randomScale, randomScale, randomScale);
+                
+                //inclination of the normals
+                Quaternion spawnRot = Quaternion.SlerpUnclamped(
+                    Quaternion.FromToRotation(Vector3.up, hit.normal), 
+                    Quaternion.identity, 
+                    Random.Range(_planetSo.Decorations[countIndex].minMaxObjectNormalRotation.x, _planetSo.Decorations[countIndex].minMaxObjectNormalRotation.y));
+                obj.transform.rotation *= spawnRot * Quaternion.Euler(obj.transform.rotation.x, obj.transform.rotation.y, obj.transform.rotation.z);
+                
+                obj.name = _planetSo.Decorations[countIndex].name;
+                
+                // Data
+                ObjData.Add(obj);
+                countDensity++;
+            } while (countDensity != _planetSo.Decorations[countIndex].densityToSpawn);
         }
+    }
+    
+    [Button("Clear Decoration")]
+    public void ClearData()
+    {
+        foreach (var obj in ObjData)
+        {
+            DestroyImmediate(obj);
+        }
+        ObjData.Clear();
+        countDensity = 0;
     }
 
     #if UNITY_EDITOR

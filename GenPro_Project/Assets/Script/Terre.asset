@@ -19,11 +19,11 @@ MonoBehaviour:
   enableNoise: 1
   useSeed: 0
   seed: 0
-  noiseScale: 0.2
+  noiseScale: 0.5
   frequency: 0.16
   amplitude: 20
-  persistence: 0.8
-  octave: 31
+  persistence: 0.65
+  octave: 25
   gradient:
     serializedVersion: 2
     key0: {r: 0.21176472, g: 0.28627452, b: 0.6509804, a: 1}
@@ -39,8 +39,8 @@ MonoBehaviour:
     ctime2: 11951
     ctime3: 23055
     ctime4: 27563
-    ctime5: 51012
-    ctime6: 64204
+    ctime5: 46897
+    ctime6: 56095
     ctime7: 64748
     atime0: 0
     atime1: 65535
@@ -55,7 +55,9 @@ MonoBehaviour:
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
   Decorations:
-  - go: {fileID: 9069115365609291303, guid: 60f79905accf3b24fa0114b941f1aac0, type: 3}
-    amountToSpawn: 150
-    scale: {x: 0.23925564, y: 0.64687634}
-    dist: 0
+  - name: Tree
+    gameObject: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310, type: 3}
+    densityToSpawn: 150
+    minMaxSpawnPos: {x: 0, y: 6.2441025}
+    SizeOfObj: {x: 0.013307987, y: 0.0148289}
+    minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
