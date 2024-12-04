@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b367fecd11ffd83419ab778e686616c6, type: 3}
-  m_Name: Terre
+  m_Name: Terre 2
   m_EditorClassIdentifier: 
   planetName: Terre
   planetSize: 7

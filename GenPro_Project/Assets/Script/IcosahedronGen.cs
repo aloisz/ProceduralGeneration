@@ -30,11 +30,11 @@ public class IcosahedronGen : MonoBehaviour
     [ShowIf("debugEdges")][Range(0,3)][SerializeField] private int thickness = 2;
     [ShowIf("debugEdges")][SerializeField] private Color lineColor = Color.green;
 
-    private List<Vector3> vertices;
-    private List<int> triangles;
+    private List<Vector3> vertices = new List<Vector3>();
+    private List<int> triangles = new List<int>();
     private Dictionary<long, int> midTriangles;
 
-    private List<GameObject> ObjData;
+    private List<GameObject> ObjData = new List<GameObject>();
     private int countDensity;
 
     private void Awake()
@@ -66,7 +66,7 @@ public class IcosahedronGen : MonoBehaviour
         midTriangles = new Dictionary<long, int>();
         
         
-        //if(ObjData.Count != 0 && ObjData != null) ClearData();
+        if(ObjData.Count != 0 && ObjData != null) ClearData();
         ObjData = new List<GameObject>();
         
         randomSeed = 0;
@@ -294,6 +294,15 @@ public class IcosahedronGen : MonoBehaviour
         mesh.colors = vertexColors;
     }
 
+    
+    private bool IsColorClose(Color color1, Color color2, float tolerance)
+    {
+        float diffR = Mathf.Abs(color1.r - color2.r);
+        float diffG = Mathf.Abs(color1.g - color2.g);
+        float diffB = Mathf.Abs(color1.b - color2.b);
+        return (diffR + diffG + diffB) <= tolerance;
+    }   
+    
     private void SpawnDecoration(Mesh mesh)
     {
         float min = float.MaxValue;
@@ -308,26 +317,31 @@ public class IcosahedronGen : MonoBehaviour
 
         Color[] vertexColors = mesh.colors;
         RaycastHit hit;
+        
         for (int i = 0; i < vertices.Count; i++)
         {
             Color vertexColor = vertexColors[i];
-            Vector3 dir = vertices[i].normalized;
+            Vector3 dir = vertices[i].normalized; 
             
-            if (!Physics.Raycast(transform.position, dir, out hit, Mathf.Infinity)) continue;
+            if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
             if (hit.transform.GetComponent<MeshCollider>() == null) continue;
+            
+            float normalizedHeight = Mathf.InverseLerp(min, max, vertices[i].magnitude);
+            Color sampledColor = _planetSo.gradient.Evaluate(normalizedHeight);
             
             for (var j = 0; j < _planetSo.Decorations.Count; j++)
             {
                 var decoration = _planetSo.Decorations[j];
                 
-                var randomValue = Random.value;
-                if(randomValue >= decoration.probability) break;
-
-                if (vertexColor.r >= decoration.minMaxSpawnPos.x &&
-                    vertexColor.r <= decoration.minMaxSpawnPos.y)
+                if(Random.value >= decoration.probability) break;
+                
+                /*if (sampledColor.r >= decoration.minMaxSpawnPos.x &&
+                    sampledColor.r <= decoration.minMaxSpawnPos.y)*/
+                    
+                if(IsColorClose(sampledColor, decoration.color, decoration.colorTolerance))
                 {
                     GameObject obj = Instantiate(decoration.gameObject, hit.point, Quaternion.identity, transform);
-
+                    
                     float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
                     obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
 
@@ -343,58 +357,7 @@ public class IcosahedronGen : MonoBehaviour
                 }
             }
         }
-    }
 
-    public void SpawnObjects()
-    {
-        float min = float.MaxValue;
-        float max = float.MinValue;
-        
-        foreach (var vertex in vertices)
-        {
-            float distance = vertex.magnitude;
-            if (distance < min) min = distance;
-            if (distance > max) max = distance;
-        }
-        
-        for (int i = 0; i <= _planetSo.Decorations.Count; i++)
-        {
-            var decoration = _planetSo.Decorations[i];
-            int countDensity = 0;
-            do
-            {
-                Vector3 startRayPos = transform.position;
-                Vector3 dir = Random.insideUnitSphere;
-    
-                RaycastHit hit;
-                if (!Physics.Raycast(startRayPos, dir, out hit, 50)) continue;
-
-                if (hit.point.magnitude >= decoration.minMaxSpawnPosTEST.x &&
-                    hit.point.magnitude <= decoration.minMaxSpawnPosTEST.y)
-                {
-                    GameObject obj = Instantiate(decoration.gameObject, hit.point, Quaternion.identity, transform);
-
-                    float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
-                    obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
-
-                    Quaternion spawnRot = Quaternion.SlerpUnclamped(
-                        Quaternion.FromToRotation(Vector3.up, hit.normal),
-                        Quaternion.identity,
-                        Random.Range(decoration.minMaxObjectNormalRotation.x, decoration.minMaxObjectNormalRotation.y)
-                    );
-                    obj.transform.rotation *= spawnRot;
-
-                    obj.name = decoration.name;
-                    ObjData.Add(obj);
-                    countDensity++;
-                }
-                else
-                {
-                    return;
-                }
-            } while (countDensity != decoration.densityToSpawn);
-        }
-        
     }
     
     [Button("Clear Decoration")]

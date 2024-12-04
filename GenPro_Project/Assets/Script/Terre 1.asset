@@ -19,7 +19,7 @@ MonoBehaviour:
   enableNoise: 1
   useSeed: 0
   seed: 0
-  noiseScale: 0.5
+  noiseScale: 0.7
   frequency: 0.16
   amplitude: 20
   persistence: 0.65
@@ -55,11 +55,10 @@ MonoBehaviour:
     m_NumColorKeys: 8
     m_NumAlphaKeys: 2
   Decorations:
-  - name: Tree
+  - name: PineTree
     gameObject: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310, type: 3}
-    probability: 0.217
-    densityToSpawn: 867
-    minMaxSpawnPos: {x: 0.26, y: 0.55}
-    minMaxSpawnPosTEST: {x: 9, y: 9}
-    SizeOfObj: {x: 0.013307987, y: 0.0148289}
+    probability: 0.128
+    minMaxSpawnPos: {x: 0.69875765, y: 1}
+    SizeOfObj: {x: 0.014866456, y: 0.025160074}
     minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
+    color: {r: 0.76470596, g: 0.79215693, b: 0.34901962, a: 1}

@@ -24,9 +24,9 @@ public class PlanetSO : ScriptableObject
     
     [Header("VertexColor")]
     public Gradient gradient;
-    
+
     [Header("Decoration")]
-    public List<Decoration> Decorations;
+    public List<Decoration> Decorations = new List<Decoration>();
 }
 
 [System.Serializable]
@@ -35,9 +35,9 @@ public class Decoration
     public string name;
     public GameObject gameObject;
     [Range(0,1)] public float probability;
-    [Range(0,10000)] public float densityToSpawn;
     [MinMaxSlider(0, 1)] public Vector2 minMaxSpawnPos;
-    [MinMaxSlider(0, 50)] public Vector2 minMaxSpawnPosTEST;
     [MinMaxSlider(.01f, .2f)] public Vector2 SizeOfObj;
     [MinMaxSlider(0, 1)]public Vector2 minMaxObjectNormalRotation;
+    public Color color;
+    public float colorTolerance;
 }
