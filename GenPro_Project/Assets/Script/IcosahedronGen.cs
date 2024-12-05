@@ -50,7 +50,7 @@ public class IcosahedronGen : MonoBehaviour
 
 
     [Button]
-    public void Generate()
+    public async Task Generate()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();

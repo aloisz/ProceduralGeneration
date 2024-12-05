@@ -14,6 +14,6 @@ public class ObjSpawing : MonoBehaviour
     void Start()
     {
         transform.DOScale(0, 0);
-        transform.DOScale(baseScale, 1.25f);
+        transform.DOScale(baseScale, Random.Range(0.75f,1.75f));
     }
 }
