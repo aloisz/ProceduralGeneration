@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class RotatingSun : MonoBehaviour
@@ -8,7 +9,7 @@ public class RotatingSun : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space)) // passing time
         {
             transform.Rotate(rotatingVector, Time.deltaTime * acceleratedSpeed);
         }
