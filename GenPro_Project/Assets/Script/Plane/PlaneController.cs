@@ -64,9 +64,19 @@ namespace Airplane
             ratio = screenWidth / screenHeight;
         }
 
+        private float time = 2f; // seconde before having hand on Controller
+        private float timeElapsed = 0;
+        private bool CanAccessController()
+        {
+            timeElapsed += Time.deltaTime;
+            return timeElapsed >= time;
+        }
+
         internal void Update()
         {
-            RotatePlane();
+            if(CanAccessController())
+                RotatePlane();
+            
             GetAcceleratorInput();
 
             if (boostDuration > 0)
