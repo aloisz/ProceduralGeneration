@@ -44,12 +44,13 @@ public class IcosahedronGen : MonoBehaviour
 
     private void Start()
     {
+        GameManager.Instance.planets.Add(this);
         Generate();
     }
 
 
     [Button]
-    private void Generate()
+    public void Generate()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
@@ -344,7 +345,9 @@ public class IcosahedronGen : MonoBehaviour
                     GameObject obj = Instantiate(decoration.ObjDecorations[randomGO].gameObject, hit.point, Quaternion.identity, transform);
                     
                     float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
-                    obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                    ObjSpawing spawn = obj.GetComponent<ObjSpawing>();
+                    spawn.SetBaseScale(randomScale);
+                    //obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
 
                     Quaternion spawnRot = Quaternion.SlerpUnclamped(
                         Quaternion.FromToRotation(Vector3.up, hit.normal),
