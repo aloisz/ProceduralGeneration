@@ -13,6 +13,7 @@ namespace Airplane
 
         [SerializeField] private PlaneController planeDir;
         [SerializeField] private RawImage AimDir;
+        [SerializeField] private float lerpAimDirSpeed = 3;
         private RectTransform aimDirRectTransform;
 
 
@@ -27,7 +28,7 @@ namespace Airplane
         }
         private void FixedUpdate()
         {
-            aimDirRectTransform.position = planeDir.GetAimPosVector2();
+            aimDirRectTransform.position = Vector3.Lerp(aimDirRectTransform.position, planeDir.GetAimPosVector2(), Time.deltaTime * lerpAimDirSpeed);
         }
     }
 
