@@ -14,28 +14,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   planetName: QBC
   planetSize: 19
-  planetSubdivision: 6
+  planetSubdivision: 5
   _material: {fileID: 2100000, guid: f071233c9055cb94a844fe0b250ce090, type: 2}
   enableNoise: 1
   useSeed: 0
   seed: 0
-  noiseScale: 0.4
-  frequency: 3.16
-  amplitude: 10.15
-  persistence: 0.41
-  octave: 50
+  noiseScale: 0.5
+  frequency: 0.32
+  amplitude: 3.45
+  persistence: 0.69
+  octave: 17
   gradient:
     serializedVersion: 2
-    key0: {r: 0.9529412, g: 0.427451, b: 0.7751422, a: 1}
-    key1: {r: 1, g: 0.7122642, b: 0.9949073, a: 1}
-    key2: {r: 0.33134568, g: 0.93373203, b: 0.9622642, a: 0}
+    key0: {r: 0, g: 0.13166761, b: 1, a: 1}
+    key1: {r: 0.6039216, g: 0.22346626, b: 0.19999997, a: 1}
+    key2: {r: 0.30793643, g: 0.8584906, b: 0.125534, a: 0}
     key3: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
     key4: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
     key5: {r: 0.735849, g: 0.735849, b: 0.735849, a: 0}
     key6: {r: 1, g: 1, b: 1, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
     ctime0: 0
-    ctime1: 28441
+    ctime1: 32768
     ctime2: 65535
     ctime3: 65535
     ctime4: 65535
@@ -54,4 +54,24 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
-  Decorations: []
+  Decorations:
+  - name: Branch
+    ObjDecorations:
+    - gameObject: {fileID: 108507113624723981, guid: eebb56c82efbd8d4bb0eb6bd925a0e9d, type: 3}
+    - gameObject: {fileID: 1493958779012120596, guid: b9de24523a11d714db3851b5f0f9d527, type: 3}
+    probability: 0.343
+    minMaxSpawnPos: {x: 0, y: 0}
+    SizeOfObj: {x: 0.058751725, y: 0.09959777}
+    minMaxObjectNormalRotation: {x: 0, y: 0.50624126}
+    color: {r: 0.5803922, g: 0.21960786, b: 0.23137257, a: 1}
+    colorTolerance: 0.1
+  - name: Mushroom
+    ObjDecorations:
+    - gameObject: {fileID: 4385080170328260021, guid: ff62b58c5a9ea164fa8ddf8038e10cd1, type: 3}
+    - gameObject: {fileID: 5440707293445505367, guid: 494f6d43e170e9145bc7865d243ee00b, type: 3}
+    probability: 0.68
+    minMaxSpawnPos: {x: 0, y: 0}
+    SizeOfObj: {x: 0.058751725, y: 0.09959777}
+    minMaxObjectNormalRotation: {x: 0, y: 0.061148316}
+    color: {r: 0.32156864, g: 0.82745105, b: 0.12941177, a: 1}
+    colorTolerance: 0.3

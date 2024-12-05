@@ -112,3 +112,12 @@ MonoBehaviour:
     minMaxObjectNormalRotation: {x: 0.13814956, y: 0.18039715}
     color: {r: 0.76470596, g: 0.79215693, b: 0.34901962, a: 1}
     colorTolerance: 0.3
+  - name: Home
+    ObjDecorations:
+    - gameObject: {fileID: 5869471975648931353, guid: 99f8cef24dcf0de41a1e9fa1a5622381, type: 3}
+    probability: 0.114
+    minMaxSpawnPos: {x: 0, y: 0.20000002}
+    SizeOfObj: {x: 0.14447647, y: 0.2}
+    minMaxObjectNormalRotation: {x: 0, y: 0}
+    color: {r: 0.76470596, g: 0.79215693, b: 0.34901962, a: 1}
+    colorTolerance: 0.3

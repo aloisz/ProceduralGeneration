@@ -54,4 +54,26 @@ MonoBehaviour:
     m_ColorSpace: 0
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
-  Decorations: []
+  Decorations:
+  - name: bush
+    ObjDecorations:
+    - gameObject: {fileID: 4263922822445002727, guid: 3cdafb3c2f54d434894928d72d282874, type: 3}
+    - gameObject: {fileID: 6239969156481229051, guid: b71b0f8d2f881c743a85228f3030d1cb, type: 3}
+    - gameObject: {fileID: 38335279662140195, guid: 34d3f526198dae440bb2ce6005d86055, type: 3}
+    probability: 0.032
+    minMaxSpawnPos: {x: 0, y: 0}
+    SizeOfObj: {x: 0.01, y: 0.0721914}
+    minMaxObjectNormalRotation: {x: 0, y: 0.31206656}
+    color: {r: 0.6313726, g: 0.64705884, b: 0.20392159, a: 1}
+    colorTolerance: 0.5
+  - name: Branch
+    ObjDecorations:
+    - gameObject: {fileID: 1493958779012120596, guid: b9de24523a11d714db3851b5f0f9d527, type: 3}
+    - gameObject: {fileID: 108507113624723981, guid: eebb56c82efbd8d4bb0eb6bd925a0e9d, type: 3}
+    - gameObject: {fileID: 4385080170328260021, guid: ff62b58c5a9ea164fa8ddf8038e10cd1, type: 3}
+    probability: 0.232
+    minMaxSpawnPos: {x: 0, y: 0}
+    SizeOfObj: {x: 0.07192787, y: 0.13411927}
+    minMaxObjectNormalRotation: {x: 0, y: 0.31206656}
+    color: {r: 0.7176471, g: 0.18431373, b: 0.18431373, a: 1}
+    colorTolerance: 0.2
