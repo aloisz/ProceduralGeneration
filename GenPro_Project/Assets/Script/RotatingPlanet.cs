@@ -1,16 +1,19 @@
 using System;
+using NaughtyAttributes;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 public class RotatingPlanet : MonoBehaviour
 {
     private Quaternion baseRotation;
-    private Vector3 rotatingVector = Vector3.up;
-    private float speed = 10;
+    [SerializeField] private bool notRandomizeRotation;
+    [ShowIf("notRandomizeRotation")][SerializeField] private Vector3 rotatingVector = Vector3.up;
+    [ShowIf("notRandomizeRotation")][SerializeField]private float speed = 10;
 
     private void Start()
     {
         baseRotation = transform.rotation;
+        if(notRandomizeRotation) return;
         rotatingVector = Random.onUnitSphere;
         speed = Random.Range(2, 15);
     }
@@ -22,8 +25,12 @@ public class RotatingPlanet : MonoBehaviour
 
     public void ResetRotation()
     {
-        rotatingVector = Random.onUnitSphere;
-        speed = Random.Range(2, 15);
+        if (!notRandomizeRotation)
+        {
+            rotatingVector = Random.onUnitSphere;
+            speed = Random.Range(2, 15);
+        }
+        
         transform.rotation = baseRotation;
     }
 }
