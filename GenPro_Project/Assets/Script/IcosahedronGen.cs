@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DG.Tweening;
 using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine;
@@ -29,37 +31,41 @@ public class IcosahedronGen : MonoBehaviour
     [SerializeField] private bool debugEdges = false;
     [ShowIf("debugEdges")][Range(0,3)][SerializeField] private int thickness = 2;
     [ShowIf("debugEdges")][SerializeField] private Color lineColor = Color.green;
-
+    
     private List<Vector3> vertices = new List<Vector3>();
     private List<int> triangles = new List<int>();
     private Dictionary<long, int> midTriangles;
 
     private List<GameObject> ObjData = new List<GameObject>();
     private int countDensity;
-
-    private void Awake()
-    {
-        
-    }
+    
+    private RotatingPlanet _rotatingPlanet;
 
     private void Start()
     {
-        GameManager.Instance.planets.Add(this);
+        GetComponent();
+        if(GameManager.Instance != null)
+            GameManager.Instance.planets.Add(this);
         Generate();
     }
 
-
     [Button]
-    public async Task Generate()
+    public void GetComponent()
     {
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
         meshCollider = GetComponent<MeshCollider>();
+        _rotatingPlanet = GetComponent<RotatingPlanet>();
+    }
 
-        transform.localScale = new Vector3(_planetSo.planetSize, _planetSo.planetSize, _planetSo.planetSize);
-        
+
+    [Button]
+    public async void Generate()
+    {
+        //StartCoroutine(ScalePlanetCoroutine(false));
+        meshRenderer.enabled = false;
         Mesh mesh = new Mesh();
-
+        
         gameObject.name = _planetSo.planetName;
         
         vertices = new List<Vector3>();
@@ -75,21 +81,76 @@ public class IcosahedronGen : MonoBehaviour
         
         GetAllVertex();
         GetAllTriangle();
+        _rotatingPlanet.ResetRotation();
         
         for (int i = 0; i < _planetSo.planetSubdivision; i++)
         {
-            Subdivision();
+            await Task.Run(() => Subdivision());
         }
-        
-        ApplyNoise();
+
+        await Task.Run(() => ApplyNoise());
 
         AssembleMesh(mesh);
+        //await ScalePlanet();
         
         if(enableVertexPainting)
             VertexColor(mesh);
         
-        if(enableDecoration)
-            SpawnDecoration(mesh);
+        if (enableDecoration)
+            SpawnDecoration();
+        
+        StartCoroutine(ScalePlanetCoroutine(true));
+    }
+
+    public void GenerateDecoration()
+    {
+        if(ObjData.Count != 0 && ObjData != null) ClearData();
+        SpawnDecoration();
+    }
+    
+    private void AssembleMesh(Mesh mesh)
+    {
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        meshFilter.mesh = mesh;
+        
+        meshRenderer.sharedMaterial = new Material(_planetSo._material);
+        meshCollider.sharedMesh = mesh;
+    }
+
+    private async Task ScalePlanet()
+    {
+        transform.localScale = Vector3.zero;
+        
+        float end = Time.time + Random.Range(1f, 1.25f);
+        while (Time.time < end)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, new Vector3(_planetSo.planetSize, _planetSo.planetSize, _planetSo.planetSize), Time.deltaTime * 3);
+
+            await Task.Yield();
+        } 
+        meshRenderer.enabled = true;
+    }
+    
+    private IEnumerator ScalePlanetCoroutine(bool ScaleUP)
+    {
+        transform.localScale = ScaleUP ? Vector3.zero : new Vector3(_planetSo.planetSize, _planetSo.planetSize, _planetSo.planetSize);
+        meshRenderer.enabled = ScaleUP;
+        float duration = Random.Range(0.125f, 2.125f);
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            
+            transform.localScale = Vector3.Lerp(transform.localScale, ScaleUP ? 
+                new Vector3(_planetSo.planetSize, _planetSo.planetSize, _planetSo.planetSize) : Vector3.zero, t);
+            yield return null;
+        }
+        transform.localScale = Vector3.one * _planetSo.planetSize;
     }
 
     #region Vertex 
@@ -167,7 +228,6 @@ public class IcosahedronGen : MonoBehaviour
     #endregion
 
     #region Subdivision
-
     private void Subdivision()
     {
         var newTriangle = new List<int>();
@@ -219,60 +279,25 @@ public class IcosahedronGen : MonoBehaviour
 
     #endregion
 
+    #region Noise
+
     private void ApplyNoise()
     {
         for (int i = 0; i < vertices.Count; i++)
         {
-            float noiseValue = Noise.Generate3DNoise(vertices[i], _planetSo.noiseScale, _planetSo.frequency, _planetSo.amplitude, _planetSo.persistence, _planetSo.octave, randomSeed);
+            float noiseValue = Noise.Generate3DNoise(vertices[i], _planetSo.noiseScale, _planetSo.frequency,
+                _planetSo.amplitude, _planetSo.persistence, _planetSo.octave, randomSeed);
+            
             vertices[i] = vertices[i].normalized * (1 + noiseValue); // Adjust vertex position
         }
     }
+
+    #endregion
     
-    private void AssembleMesh(Mesh mesh)
-    {
-        mesh.vertices = vertices.ToArray();
-        mesh.triangles = triangles.ToArray();
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-        meshFilter.mesh = mesh;
-        
-        meshRenderer.sharedMaterial = new Material(_planetSo._material);
-        meshCollider.sharedMesh = mesh;
-    }
+    #region Vertex Color
 
     private void VertexColor(Mesh mesh)
     {
-        /*Color[] colors = new Color[vertices.Count];
-
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            for (int j = 0; j < _planetSo.VertexColors.Count; j++)
-            {
-                if (Vector3.Distance(vertices[i] + transform.position, transform.localPosition) >= _planetSo.VertexColors[j].dist)
-                {
-                    colors[i] = _planetSo.VertexColors[j].color;
-                }
-            }
-        }
-        mesh.colors = colors;*/
-        
-        /*float minY = float.MaxValue;
-        float maxY = float.MinValue;
-        foreach (var vertex in vertices)
-        {
-            if (vertex.y < minY) minY = vertex.y;
-            if (vertex.y > maxY) maxY = vertex.y;
-        }
-
-        Color[] vertexColors = new Color[vertices.Count];
-        for (int i = 0; i < vertices.Count; i++)
-        {
-            float normalizedY = Mathf.InverseLerp(minY, maxY, );
-            vertexColors[i] = _planetSo.gradient.Evaluate(normalizedY);
-        }
-
-        mesh.colors = vertexColors;*/
-
         float min = float.MaxValue;
         float max = float.MinValue;
         
@@ -295,6 +320,9 @@ public class IcosahedronGen : MonoBehaviour
         mesh.colors = vertexColors;
     }
 
+    #endregion
+
+    #region Decoration
     
     private bool IsColorClose(Color color1, Color color2, float tolerance)
     {
@@ -304,7 +332,7 @@ public class IcosahedronGen : MonoBehaviour
         return (diffR + diffG + diffB) <= tolerance;
     }   
     
-    private void SpawnDecoration(Mesh mesh)
+    private void SpawnDecoration()
     {
         float min = float.MaxValue;
         float max = float.MinValue;
@@ -315,13 +343,10 @@ public class IcosahedronGen : MonoBehaviour
             if (distance < min) min = distance;
             if (distance > max) max = distance;
         }
-
-        Color[] vertexColors = mesh.colors;
         RaycastHit hit;
         
         for (int i = 0; i < vertices.Count; i++)
         {
-            Color vertexColor = vertexColors[i];
             Vector3 dir = vertices[i].normalized; 
             
             if (!Physics.Raycast(transform.position, dir, out hit, 50)) continue;
@@ -335,9 +360,6 @@ public class IcosahedronGen : MonoBehaviour
                 var decoration = _planetSo.Decorations[j];
                 
                 if(Random.value >= decoration.probability) break;
-                
-                /*if (sampledColor.r >= decoration.minMaxSpawnPos.x &&
-                    sampledColor.r <= decoration.minMaxSpawnPos.y)*/
                     
                 if(IsColorClose(sampledColor, decoration.color, decoration.colorTolerance))
                 {
@@ -345,9 +367,10 @@ public class IcosahedronGen : MonoBehaviour
                     GameObject obj = Instantiate(decoration.ObjDecorations[randomGO].gameObject, hit.point, Quaternion.identity, transform);
                     
                     float randomScale = Random.Range(decoration.SizeOfObj.x, decoration.SizeOfObj.y);
+                    obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
+                    
                     ObjSpawing spawn = obj.GetComponent<ObjSpawing>();
                     spawn.SetBaseScale(randomScale);
-                    //obj.transform.localScale = new Vector3(randomScale, randomScale, randomScale);
 
                     Quaternion spawnRot = Quaternion.SlerpUnclamped(
                         Quaternion.FromToRotation(Vector3.up, hit.normal),
@@ -361,8 +384,10 @@ public class IcosahedronGen : MonoBehaviour
                 }
             }
         }
-
     }
+
+    #endregion
+    
     
     [Button("Clear Decoration")]
     public void ClearData()
@@ -375,7 +400,9 @@ public class IcosahedronGen : MonoBehaviour
         countDensity = 0;
     }
 
-    #if UNITY_EDITOR
+    #region Debug
+
+#if UNITY_EDITOR
     [ExecuteAlways]
     private void OnDrawGizmos()
     {
@@ -414,5 +441,7 @@ public class IcosahedronGen : MonoBehaviour
             }
         }
     }
-    #endif
+#endif
+
+    #endregion
 }

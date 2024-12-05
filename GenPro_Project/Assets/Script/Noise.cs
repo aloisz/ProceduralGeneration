@@ -1,34 +1,8 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public static class Noise 
 {
-    public static float Noise3D(Vector3 position, float frequency, int subdivision, float amplitude, float persistence, int octave, int seed)
-    {
-        float noise = 0.0f;
-
-        for (int i = 0; i < octave; ++i)
-        {
-            // Get all permutations of noise for each individual axis
-            float noiseXY = Mathf.PerlinNoise(position.x * frequency + seed, position.y * (frequency / subdivision) + seed) * amplitude;
-            float noiseXZ = Mathf.PerlinNoise(position.x * frequency + seed, position.z * (frequency / subdivision) + seed) * amplitude;
-            float noiseYZ = Mathf.PerlinNoise(position.y * frequency + seed, position.z * (frequency / subdivision) + seed) * amplitude;
-
-            // Reverse of the permutations of noise for each individual axis
-            /*float noiseYX = Mathf.PerlinNoise(y * frequency + seed, x * frequency + seed) * amplitude;
-            float noiseZX = Mathf.PerlinNoise(z * frequency + seed, x * frequency + seed) * amplitude;
-            float noiseZY = Mathf.PerlinNoise(z * frequency + seed, y * frequency + seed) * amplitude;*/
-
-            // Use the average of the noise functions
-            noise += (noiseXY + noiseXZ + noiseYZ ) / 3.0f; //+ noiseYX + noiseZX + noiseZY
-
-            amplitude *= persistence;
-            frequency *= 2.0f;
-        }
-
-        // Use the average of all octaves
-        return noise / octave;
-    }
-    
     private static readonly int[] Permutation = {
         151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7,
         225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247,
