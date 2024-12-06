@@ -88,7 +88,8 @@ public class IcosahedronGen : MonoBehaviour
             await Task.Run(() => Subdivision());
         }
 
-        await Task.Run(() => ApplyNoise());
+        if(_planetSo.enableNoise)
+            await Task.Run(() => ApplyNoise());
 
         AssembleMesh(mesh);
         //await ScalePlanet();
@@ -167,7 +168,7 @@ public class IcosahedronGen : MonoBehaviour
         // Golden ratio
         var phi = (1 + Mathf.Sqrt(5) / 2);
         
-        // 12 Vertices 
+        // Vertices Coordinate
         AddVertex(-1, phi, 0);
         AddVertex(1, phi, 0);
         AddVertex(-1, -phi, 0);
@@ -403,7 +404,6 @@ public class IcosahedronGen : MonoBehaviour
     #region Debug
 
 #if UNITY_EDITOR
-    [ExecuteAlways]
     private void OnDrawGizmos()
     {
         if(!Application.isPlaying) return;
