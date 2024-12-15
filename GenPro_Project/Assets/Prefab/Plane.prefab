@@ -58,7 +58,7 @@ Transform:
   m_GameObject: {fileID: 1771153549764793826}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.78, y: 0, z: 0.19}
+  m_LocalPosition: {x: -1.78, y: 0, z: 1.097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -206,8 +206,9 @@ MonoBehaviour:
   bulletGo: {fileID: 5534033345053830783, guid: 5fbe0ef9686e87041af7df5246febde8, type: 3}
   numberOfBullets: 15
   remainingBullets: 0
-  fireRate: 15
-  bulletSpeed: 15000
+  fireRate: 5.5
+  bulletSpeed: 1500
+  bulletSpeedPlaneFactor: 80
   bulletLifeSpan: 3
 --- !u!54 &1678453772216716391
 Rigidbody:
@@ -353,6 +354,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 55a282a9-acc8-497a-878e-a5ac00512213
     m_ActionName: 'Player/Acceleration[/Keyboard/leftShift,/Keyboard/ctrl]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 6071188631008849291}
+        m_TargetAssemblyTypeName: Weapon, Assembly-CSharp
+        m_MethodName: Reload
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 0af3c812-9853-4c13-8edf-23722c5d6212
+    m_ActionName: 'Player/Reload[/Keyboard/r]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -564,7 +581,7 @@ Transform:
   m_GameObject: {fileID: 3940536000169838131}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.26, y: 0, z: 0.15}
+  m_LocalPosition: {x: 1.26, y: 0, z: 1.057}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Airplane;
 using NaughtyAttributes;
 using UnityEngine;
 
@@ -13,13 +14,17 @@ public class Weapon : MonoBehaviour
     [SerializeField] [ReadOnly] internal int remainingBullets;
     [SerializeField] internal float fireRate;
     [SerializeField] internal float bulletSpeed;
+    [SerializeField] internal float bulletSpeedPlaneFactor = 3f;
     [SerializeField] internal float bulletLifeSpan;
     
     private float lastTimeFired;
     private bool isEven;
+
+    protected PlaneController plane;
     
     internal void Start()
     {
+        plane = GetComponent<PlaneController>();
         Reload();
     }
 
@@ -28,7 +33,7 @@ public class Weapon : MonoBehaviour
         if(GetInput.Instance.GetIsFiring()) Shoot();
     }
 
-    internal void Reload()
+    public void Reload()
     {
         remainingBullets = numberOfBullets;
     }
@@ -42,11 +47,16 @@ public class Weapon : MonoBehaviour
             lastTimeFired = Time.time;
             isEven = !isEven;
             
-            Bullet bullet = Instantiate(bulletGo, transform.position, Quaternion.identity);
+            Quaternion planeDir = Quaternion.LookRotation(plane.transform.forward * 1500 + plane.transform.position);
+            
+            Bullet bullet = Instantiate(bulletGo, transform.position, planeDir);
             bullet.transform.position =
                 isEven ? gunBarrels[0].transform.position : gunBarrels[1].transform.position;
-                
-            bullet.InitBullet(bulletSpeed, isEven ? gunBarrels[0].transform.forward : gunBarrels[1].transform.forward,20, bulletLifeSpan);
+            
+            bullet.InitBullet(bulletSpeed + (plane.actualSpeed * bulletSpeedPlaneFactor), 
+                isEven ? gunBarrels[0].transform.forward : gunBarrels[1].transform.forward,20, bulletLifeSpan);
+
+            remainingBullets--;
         }
     }
 }

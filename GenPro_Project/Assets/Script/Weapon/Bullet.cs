@@ -34,7 +34,6 @@ public class Bullet : MonoBehaviour
         if (other.transform.TryGetComponent(typeof(IDamage), out var damage))
         {
             ((IDamage)damage)?.Damage(this.damage);
-            
         }
 
         Instantiate(particleSys, transform.position, Quaternion.identity);
