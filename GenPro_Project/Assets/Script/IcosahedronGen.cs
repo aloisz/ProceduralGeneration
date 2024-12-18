@@ -6,6 +6,7 @@ using DG.Tweening;
 using NaughtyAttributes;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Rendering;
 using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
@@ -65,6 +66,7 @@ public class IcosahedronGen : MonoBehaviour
         //StartCoroutine(ScalePlanetCoroutine(false));
         meshRenderer.enabled = false;
         Mesh mesh = new Mesh();
+        mesh.indexFormat = IndexFormat.UInt32;
         
         gameObject.name = _planetSo.planetName;
         

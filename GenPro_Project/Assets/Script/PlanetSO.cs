@@ -8,7 +8,7 @@ public class PlanetSO : ScriptableObject
     [Header("Property")] 
     public string planetName;
     [Range(0,50)]public int planetSize = 1;
-    [Range(0,6)]public int planetSubdivision = 1;
+    [Range(0,10)]public int planetSubdivision = 1;
     public Material _material;
 
     [Header("Noise")] 

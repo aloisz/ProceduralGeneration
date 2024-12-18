@@ -13,17 +13,17 @@ MonoBehaviour:
   m_Name: Test
   m_EditorClassIdentifier: 
   planetName: 
-  planetSize: 1
-  planetSubdivision: 0
+  planetSize: 7
+  planetSubdivision: 10
   _material: {fileID: 2100000, guid: f071233c9055cb94a844fe0b250ce090, type: 2}
-  enableNoise: 0
+  enableNoise: 1
   useSeed: 0
   seed: 0
-  noiseScale: 1
+  noiseScale: 0.35
   frequency: 1
   amplitude: 1
-  persistence: 1
-  octave: 1
+  persistence: 0.2
+  octave: 8
   gradient:
     serializedVersion: 2
     key0: {r: 1, g: 1, b: 1, a: 1}
