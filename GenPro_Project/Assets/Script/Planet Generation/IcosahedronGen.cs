@@ -263,7 +263,7 @@ public class IcosahedronGen : MonoBehaviour
         long min = Mathf.Min(v1, v2);
         long max = Mathf.Max(v1, v2);
         // Unique Key
-        long key = (min*128*128) + max; 
+        long key = (min << 32) + max; 
 
         if (midTriangles.TryGetValue(key, out int midpointIndex))
         {
